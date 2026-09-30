@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AVERO HUD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="hud-shell">
+      <div class="city-backdrop">
+        <div class="city-glow"></div>
+        <div class="sky-layer"></div>
+        <div class="building b1"></div>
+        <div class="building b2"></div>
+        <div class="building b3"></div>
+        <div class="building b4"></div>
+        <div class="palm p1"></div>
+        <div class="palm p2"></div>
+        <div class="palm p3"></div>
+        <div class="road-surface"></div>
+      </div>
+
+      <div class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-logo">AVERO</div>
+          <div class="brand-sub">CITY</div>
+        </div>
+
+        <div class="money-box">
+          <div class="mini-stat">
+            <span class="label">Cash</span>
+            <span class="value cash">$ 15.800</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">Bank</span>
+            <span class="value bank">$ 138.420</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">Wanted</span>
+            <span class="value wanted">1★</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="left-stack">
+        <div class="player-panel">
+          <div class="head-wrap">
+            <div class="helmet"></div>
+            <div class="mask"></div>
+            <div class="avatar-face"></div>
+            <div class="head-shadow"></div>
+          </div>
+        </div>
+
+        <div class="bars-panel">
+          <div class="bar-row">
+            <span class="bar-label">Food</span>
+            <div class="bar"><span style="--w:86%; --c1:#ff8f4e; --c2:#ff4b7d;"></span></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Water</span>
+            <div class="bar"><span style="--w:76%; --c1:#50d8ff; --c2:#4fe7bd;"></span></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Stamina</span>
+            <div class="bar"><span style="--w:64%; --c1:#8f66ff; --c2:#6edaff;"></span></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Health</span>
+            <div class="bar"><span style="--w:100%; --c1:#77f7b8; --c2:#4be0d2;"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-stack">
+        <div class="rpm-gauge">
+          <div class="gauge-inner">
+            <span>0</span>
+          </div>
+        </div>
+
+        <div class="speed-box">
+          <div class="speed-number">040</div>
+          <div class="speed-unit">KM/H</div>
+        </div>
+      </div>
+
+      <div class="mini-map">
+        <div class="map-center"></div>
+        <div class="map-point p-red"></div>
+        <div class="map-point p-green"></div>
+        <div class="map-point p-blue"></div>
+      </div>
+
+      <div class="bottom-right">
+        <div class="health-chip">
+          <div class="pulse-dot"></div>
+          <span class="hp-num">100%</span>
+        </div>
+        <div class="status-tag">ON DUTY</div>
+      </div>
+
+      <div class="car-scene">
+        <div class="car-body">
+          <div class="car-roof"></div>
+          <div class="car-window"></div>
+          <div class="car-light front"></div>
+          <div class="car-light rear"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+  </body>
+</html>
