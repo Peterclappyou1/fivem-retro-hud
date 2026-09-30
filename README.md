@@ -1,4 +1,4 @@
-# FiveM Retro HUD
+# FiveM Avero HUD
 
 Ein neues HUD mit AVERO-Branding oben, City-Hintergrund und Pink-Fokus `#f91cf9`.
 
