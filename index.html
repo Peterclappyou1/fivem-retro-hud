@@ -1,121 +1,771 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AVERO HUD</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="hud-shell">
-      <div class="city-backdrop">
-        <div class="city-glow"></div>
-        <div class="sky-layer"></div>
-        <div class="building b1"></div>
-        <div class="building b2"></div>
-        <div class="building b3"></div>
-        <div class="building b4"></div>
-        <div class="palm p1"></div>
-        <div class="palm p2"></div>
-        <div class="palm p3"></div>
-        <div class="road-surface"></div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVERO HUD</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+    :root {
+      --hud-accent: #f91cf9;
+      --hud-accent-2: #7d6dff;
+      --hud-accent-3: #52ebff;
+      --hud-gold: #ffd76d;
+      --hud-green: #65ffc0;
+      --hud-red: #ff546d;
+      --hud-text: #f5f7ff;
+      --hud-soft: #dfe9ff;
+      --panel: rgba(12, 16, 28, 0.48);
+      --panel-strong: rgba(10, 12, 20, 0.76);
+      --street-line: rgba(255, 212, 86, 0.92);
+      --shadow: rgba(0, 0, 0, 0.34);
+      --road-dark: #161b25;
+      --road-mid: #202734;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: var(--hud-text);
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.15), transparent 18%),
+        linear-gradient(180deg, #d6caef 0%, #cdc3ef 18%, #2d3759 64%, #0a0d16 100%);
+    }
+
+    .hud-shell {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(12, 13, 24, 0.06), rgba(12, 13, 24, 0.23));
+    }
+
+    .city-backdrop {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(12,13,24,0.06), rgba(12,13,24,0.23));
+    }
+
+    .city-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,0.35), transparent 15%),
+        radial-gradient(circle at 84% 20%, rgba(249, 28, 249, 0.12), transparent 22%);
+    }
+
+    .sky-layer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 22%;
+      height: 38%;
+      background:
+        linear-gradient(180deg, rgba(30, 33, 42, 0.05), rgba(15, 20, 30, 0.32)),
+        repeating-linear-gradient(
+          90deg,
+          rgba(44, 49, 64, 0.75) 0 6%,
+          rgba(27, 35, 45, 0.82) 6% 9%,
+          rgba(50, 64, 80, 0.7) 9% 12%
+        );
+      opacity: 0.72;
+    }
+
+    .building {
+      position: absolute;
+      bottom: 23%;
+      width: 100px;
+      background: linear-gradient(180deg, rgba(31, 40, 50, 0.9), rgba(17, 20, 28, 0.95));
+      box-shadow: inset 0 0 16px rgba(255,255,255,0.04), 0 18px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .building::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,0.16) 0 2px,
+          rgba(255,138,74,0.08) 2px 8px,
+          rgba(0,0,0,0) 8px 14px
+        );
+      opacity: 0.8;
+    }
+
+    .b1 { left: 9%; height: 170px; width: 120px; }
+    .b2 { left: 23%; height: 225px; width: 110px; }
+    .b3 { right: 18%; height: 208px; width: 130px; }
+    .b4 { right: 6%; height: 190px; width: 95px; }
+
+    .palm {
+      position: absolute;
+      bottom: 27%;
+      width: 10px;
+      height: 170px;
+      background: linear-gradient(180deg, #5d432f, #2b211b);
+      border-radius: 12px;
+      transform-origin: bottom center;
+    }
+
+    .palm::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -28px;
+      width: 150px;
+      height: 150px;
+      transform: translateX(-50%);
+      background: radial-gradient(circle at 50% 50%, rgba(45,105,62,0.9) 0 26%, rgba(28,90,47,0.55) 27% 58%, transparent 59% 100%);
+      border-radius: 50%;
+      opacity: 0.9;
+    }
+
+    .p1 { left: 66%; transform: rotate(-4deg); }
+    .p2 { left: 81%; transform: rotate(5deg); }
+    .p3 { left: 90%; transform: rotate(-2deg); }
+
+    .road-surface {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -6%;
+      height: 50%;
+      background: linear-gradient(180deg, #171d26, #0b0d12);
+      clip-path: polygon(0 25%, 100% 25%, 100% 100%, 0% 100%);
+    }
+
+    .road-surface::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 20%,
+          rgba(255,221,113,0.9) 20% 21.1%,
+          transparent 21.1% 42.2%
+        );
+      opacity: 0.86;
+    }
+
+    .topbar {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .brand-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 18px 10px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(255,129,214,0.96), rgba(255,28,249,0.7), rgba(126,92,255,0.8));
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 22px rgba(249, 28, 249, 0.42), inset 0 0 20px rgba(255,255,255,0.12);
+    }
+
+    .brand-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff7ff;
+      line-height: 1;
+      text-shadow: 0 0 14px rgba(255,255,255,0.44);
+    }
+
+    .brand-sub {
+      font-size: 9px;
+      letter-spacing: 0.34em;
+      opacity: 0.92;
+      font-family: 'Orbitron', sans-serif;
+      margin-top: 6px;
+    }
+
+    .money-box {
+      min-width: 180px;
+      background: rgba(12, 15, 22, 0.34);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 10px;
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04);
+    }
+
+    .mini-stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      padding: 3px 0;
+      color: var(--hud-soft);
+    }
+
+    .mini-stat .label {
+      opacity: 0.75;
+      letter-spacing: 0.08em;
+    }
+
+    .mini-stat .value {
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .cash { color: var(--hud-green); }
+    .bank { color: var(--hud-accent-3); }
+    .wanted { color: var(--hud-gold); }
+
+    .left-stack {
+      position: absolute;
+      left: 18px;
+      top: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      z-index: 10;
+    }
+
+    .player-panel {
+      position: relative;
+      width: 250px;
+      height: 220px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(131, 129, 255, 0.15), rgba(17, 18, 28, 0.14));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    .head-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .helmet {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      width: 170px;
+      height: 82px;
+      border-radius: 38px 38px 54px 54px;
+      background: linear-gradient(180deg, #efefef, #cfcfd2);
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.12), 0 10px 20px rgba(0,0,0,0.12);
+      transform: rotate(-7deg);
+    }
+
+    .helmet::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 16px;
+      height: 12px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(135,142,155,0.7), rgba(255,255,255,0.8));
+    }
+
+    .mask {
+      position: absolute;
+      left: 30px;
+      top: 86px;
+      width: 120px;
+      height: 82px;
+      border-radius: 22px 22px 26px 26px;
+      background: linear-gradient(180deg, #e7e7ea, #b9bcc5);
+      transform: rotate(3deg);
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.1);
+    }
+
+    .avatar-face {
+      position: absolute;
+      left: 36px;
+      top: 64px;
+      width: 130px;
+      height: 120px;
+      border-radius: 40% 40% 45% 45%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(0,0,0,0.14));
+    }
+
+    .bars-panel {
+      position: relative;
+      width: 210px;
+      background: rgba(16, 20, 30, 0.18);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 150px;
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04);
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 7px 0;
+    }
+
+    .bar-label {
+      min-width: 44px;
+      color: var(--hud-soft);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .bar {
+      position: relative;
+      flex: 1;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .bar span {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--w);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--c1), var(--c2));
+      box-shadow: 0 0 14px rgba(255,255,255,0.12);
+    }
+
+    .center-stack {
+      position: absolute;
+      left: 50%;
+      bottom: 34px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+      z-index: 12;
+    }
+
+    .rpm-gauge {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(21,24,35,0.8) 0 52%, rgba(10,14,20,0.96) 53% 58%, rgba(0,0,0,0.72) 59% 100%);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.05), 0 0 26px rgba(82, 235, 255, 0.14);
+      display: grid;
+      place-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 28px;
+      color: #f8fdff;
+      text-shadow: 0 0 10px rgba(255,255,255,0.4);
+    }
+
+    .rpm-gauge::before {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .rpm-gauge::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: conic-gradient(from 240deg, rgba(82,235,255,0.7), rgba(91, 255, 171, 0.26), rgba(255,93,146,0.68), rgba(82,235,255,0.7));
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0);
+      mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0);
+    }
+
+    .speed-box {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      padding: 16px 18px 12px;
+      min-width: 220px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(13,18,30,0.15), rgba(13,18,30,0.35));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.05);
+    }
+
+    .speed-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      color: #ffffff;
+      text-shadow: 0 0 14px rgba(255,255,255,0.22);
+    }
+
+    .speed-unit {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      margin-bottom: 8px;
+      letter-spacing: 0.18em;
+      color: var(--hud-accent-3);
+    }
+
+    .mini-map {
+      position: absolute;
+      left: 28px;
+      bottom: 18px;
+      width: 220px;
+      height: 220px;
+      border-radius: 18px;
+      background: radial-gradient(circle at center, rgba(15,20,28,0.8), rgba(5,8,12,0.9));
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04), 0 12px 26px rgba(0,0,0,0.2);
+      z-index: 12;
+      overflow: hidden;
+    }
+
+    .mini-map::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.05) 0 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.42;
+    }
+
+    .map-center {
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 0 10px rgba(255,255,255,0.03);
+    }
+
+    .map-point {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(255,255,255,0.28);
+    }
+
+    .p-red { left: 34%; top: 32%; background: var(--hud-red); }
+    .p-green { left: 64%; top: 48%; background: var(--hud-green); }
+    .p-blue { left: 58%; top: 60%; background: var(--hud-accent-3); }
+
+    .bottom-right {
+      position: absolute;
+      right: 84px;
+      bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      z-index: 12;
+    }
+
+    .health-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(12, 16, 26, 0.46);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04);
+    }
+
+    .pulse-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #7bf9dd, #33c9ff);
+      box-shadow: 0 0 16px rgba(74, 226, 255, 0.86);
+    }
+
+    .hp-num {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      font-size: 18px;
+    }
+
+    .status-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      padding: 5px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .car-scene {
+      position: absolute;
+      left: 38%;
+      bottom: 7%;
+      width: 440px;
+      height: 190px;
+      z-index: 9;
+      transform: rotate(-7deg);
+      filter: drop-shadow(0 14px 20px rgba(0,0,0,0.26));
+    }
+
+    .car-body {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 110px;
+      border-radius: 34px 34px 26px 28px;
+      background: linear-gradient(180deg, #dfe2ea 0%, #b8bec8 22%, #8d929b 100%);
+      border: 1px solid rgba(0,0,0,0.2);
+    }
+
+    .car-roof {
+      position: absolute;
+      left: 110px;
+      right: 120px;
+      bottom: 68px;
+      height: 58px;
+      border-radius: 18px 18px 12px 12px;
+      background: linear-gradient(180deg, rgba(206,211,221,0.96), rgba(138,146,158,0.94));
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .car-window {
+      position: absolute;
+      left: 123px;
+      right: 138px;
+      bottom: 82px;
+      height: 34px;
+      border-radius: 12px 12px 10px 10px;
+      background: linear-gradient(180deg, rgba(51,61,75,0.64), rgba(12,18,24,0.5));
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .car-light {
+      position: absolute;
+      width: 62px;
+      height: 18px;
+      border-radius: 10px;
+      bottom: 82px;
+      background: linear-gradient(180deg, #7b8392, #4a5568);
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .car-light.front { left: 16px; }
+    .car-light.rear { right: 16px; }
+
+    .wheel {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      bottom: -4px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #1d232e 0 20%, #090d13 21% 52%, #1e2430 53% 100%);
+      border: 8px solid rgba(22, 26, 34, 0.95);
+      box-shadow: inset 0 0 0 5px rgba(255,255,255,0.06);
+    }
+
+    .wheel::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.06);
+    }
+
+    .wheel.left { left: 50px; }
+    .wheel.right { right: 50px; }
+
+    @media (max-width: 1180px) {
+      .left-stack,
+      .topbar,
+      .bottom-right,
+      .mini-map {
+        transform: scale(0.84);
+        transform-origin: left top;
+      }
+
+      .topbar {
+        transform-origin: right top;
+      }
+
+      .bottom-right {
+        transform-origin: right bottom;
+      }
+
+      .mini-map {
+        transform-origin: left bottom;
+      }
+
+      .center-stack {
+        transform: translateX(-50%) scale(0.9);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hud-shell">
+    <div class="city-backdrop">
+      <div class="city-glow"></div>
+      <div class="sky-layer"></div>
+      <div class="building b1"></div>
+      <div class="building b2"></div>
+      <div class="building b3"></div>
+      <div class="building b4"></div>
+      <div class="palm p1"></div>
+      <div class="palm p2"></div>
+      <div class="palm p3"></div>
+      <div class="road-surface"></div>
+    </div>
+
+    <div class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-logo">AVERO</div>
+        <div class="brand-sub">CITY</div>
       </div>
 
-      <div class="topbar">
-        <div class="brand-wrap">
-          <div class="brand-logo">AVERO</div>
-          <div class="brand-sub">CITY</div>
+      <div class="money-box">
+        <div class="mini-stat">
+          <span class="label">Cash</span>
+          <span class="value cash">$ 15.800</span>
         </div>
-
-        <div class="money-box">
-          <div class="mini-stat">
-            <span class="label">Cash</span>
-            <span class="value cash">$ 15.800</span>
-          </div>
-          <div class="mini-stat">
-            <span class="label">Bank</span>
-            <span class="value bank">$ 138.420</span>
-          </div>
-          <div class="mini-stat">
-            <span class="label">Wanted</span>
-            <span class="value wanted">1★</span>
-          </div>
+        <div class="mini-stat">
+          <span class="label">Bank</span>
+          <span class="value bank">$ 138.420</span>
         </div>
-      </div>
-
-      <div class="left-stack">
-        <div class="player-panel">
-          <div class="head-wrap">
-            <div class="helmet"></div>
-            <div class="mask"></div>
-            <div class="avatar-face"></div>
-            <div class="head-shadow"></div>
-          </div>
-        </div>
-
-        <div class="bars-panel">
-          <div class="bar-row">
-            <span class="bar-label">Food</span>
-            <div class="bar"><span style="--w:86%; --c1:#ff8f4e; --c2:#ff4b7d;"></span></div>
-          </div>
-          <div class="bar-row">
-            <span class="bar-label">Water</span>
-            <div class="bar"><span style="--w:76%; --c1:#50d8ff; --c2:#4fe7bd;"></span></div>
-          </div>
-          <div class="bar-row">
-            <span class="bar-label">Stamina</span>
-            <div class="bar"><span style="--w:64%; --c1:#8f66ff; --c2:#6edaff;"></span></div>
-          </div>
-          <div class="bar-row">
-            <span class="bar-label">Health</span>
-            <div class="bar"><span style="--w:100%; --c1:#77f7b8; --c2:#4be0d2;"></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="center-stack">
-        <div class="rpm-gauge">
-          <div class="gauge-inner">
-            <span>0</span>
-          </div>
-        </div>
-
-        <div class="speed-box">
-          <div class="speed-number">040</div>
-          <div class="speed-unit">KM/H</div>
-        </div>
-      </div>
-
-      <div class="mini-map">
-        <div class="map-center"></div>
-        <div class="map-point p-red"></div>
-        <div class="map-point p-green"></div>
-        <div class="map-point p-blue"></div>
-      </div>
-
-      <div class="bottom-right">
-        <div class="health-chip">
-          <div class="pulse-dot"></div>
-          <span class="hp-num">100%</span>
-        </div>
-        <div class="status-tag">ON DUTY</div>
-      </div>
-
-      <div class="car-scene">
-        <div class="car-body">
-          <div class="car-roof"></div>
-          <div class="car-window"></div>
-          <div class="car-light front"></div>
-          <div class="car-light rear"></div>
-          <div class="wheel left"></div>
-          <div class="wheel right"></div>
+        <div class="mini-stat">
+          <span class="label">Wanted</span>
+          <span class="value wanted">1★</span>
         </div>
       </div>
     </div>
 
-    <script src="config.js"></script>
-  </body>
+    <div class="left-stack">
+      <div class="player-panel">
+        <div class="head-wrap">
+          <div class="helmet"></div>
+          <div class="mask"></div>
+          <div class="avatar-face"></div>
+        </div>
+      </div>
+
+      <div class="bars-panel">
+        <div class="bar-row">
+          <span class="bar-label">Food</span>
+          <div class="bar"><span style="--w:86%; --c1:#ff8f4e; --c2:#ff4b7d;"></span></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Water</span>
+          <div class="bar"><span style="--w:76%; --c1:#50d8ff; --c2:#4fe7bd;"></span></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Stamina</span>
+          <div class="bar"><span style="--w:64%; --c1:#8f66ff; --c2:#6edaff;"></span></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Health</span>
+          <div class="bar"><span style="--w:100%; --c1:#77f7b8; --c2:#4be0d2;"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="center-stack">
+      <div class="rpm-gauge">0</div>
+      <div class="speed-box">
+        <div class="speed-number">040</div>
+        <div class="speed-unit">KM/H</div>
+      </div>
+    </div>
+
+    <div class="mini-map">
+      <div class="map-center"></div>
+      <div class="map-point p-red"></div>
+      <div class="map-point p-green"></div>
+      <div class="map-point p-blue"></div>
+    </div>
+
+    <div class="bottom-right">
+      <div class="health-chip">
+        <div class="pulse-dot"></div>
+        <span class="hp-num">100%</span>
+      </div>
+      <div class="status-tag">ON DUTY</div>
+    </div>
+
+    <div class="car-scene">
+      <div class="car-body">
+        <div class="car-roof"></div>
+        <div class="car-window"></div>
+        <div class="car-light front"></div>
+        <div class="car-light rear"></div>
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hudConfig = {
+      brand: {
+        name: 'AVERO',
+        subtitle: 'CITY',
+        accent: '#f91cf9'
+      },
+      money: {
+        cash: '$ 15.800',
+        bank: '$ 138.420',
+        wanted: '1★'
+      },
+      speed: {
+        value: '040',
+        unit: 'KM/H'
+      },
+      health: '100%',
+      status: 'ON DUTY'
+    };
+
+    document.querySelector('.brand-logo').textContent = hudConfig.brand.name;
+    document.querySelector('.brand-sub').textContent = hudConfig.brand.subtitle;
+    document.querySelector('.cash').textContent = hudConfig.money.cash;
+    document.querySelector('.bank').textContent = hudConfig.money.bank;
+    document.querySelector('.wanted').textContent = hudConfig.money.wanted;
+    document.querySelector('.speed-number').textContent = hudConfig.speed.value;
+    document.querySelector('.speed-unit').textContent = hudConfig.speed.unit;
+    document.querySelector('.hp-num').textContent = hudConfig.health;
+    document.querySelector('.status-tag').textContent = hudConfig.status;
+    document.querySelector('.rpm-gauge').textContent = '0';
+  </script>
+</body>
 </html>
